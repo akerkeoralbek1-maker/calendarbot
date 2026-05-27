@@ -1,15 +1,18 @@
 import os
+
 from flask import Flask, request
 from dotenv import load_dotenv
-
 from google_auth_oauthlib.flow import Flow
+
 
 load_dotenv()
 
 app = Flask(__name__)
 
 SCOPES = ["https://www.googleapis.com/auth/calendar"]
+
 REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI")
+
 CLIENT_CONFIG = {
     "web": {
         "client_id": os.getenv("GOOGLE_CLIENT_ID"),
@@ -19,6 +22,7 @@ CLIENT_CONFIG = {
         "redirect_uris": [REDIRECT_URI],
     }
 }
+
 
 @app.route("/")
 def home():
@@ -33,9 +37,9 @@ def auth():
         return "Missing user_id", 400
 
     flow = Flow.from_client_config(
-    CLIENT_CONFIG,
-    scopes=SCOPES,
-    redirect_uri=REDIRECT_URI,
+        CLIENT_CONFIG,
+        scopes=SCOPES,
+        redirect_uri=REDIRECT_URI,
     )
 
     authorization_url, state = flow.authorization_url(
@@ -55,13 +59,15 @@ def oauth2callback():
     if not user_id:
         return "Missing user_id", 400
 
-    from_client_config(
-    CLIENT_CONFIG,flow
+    flow = Flow.from_client_config(
+        CLIENT_CONFIG,
         scopes=SCOPES,
         redirect_uri=REDIRECT_URI,
     )
 
-    flow.fetch_token(authorization_response=request.url)
+    flow.fetch_token(
+        authorization_response=request.url
+    )
 
     credentials = flow.credentials
 
