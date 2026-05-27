@@ -67,7 +67,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif user_message == "🔗 Привязать Google Calendar":
         user_id = update.effective_user.id
 
-        auth_url = f"http://localhost:5000/auth?user_id={user_id}"
+        auth_url = f"https://calendarbot-nibs.onrender.com/auth?user_id={user_id}"
 
         await update.message.reply_text(
             "Чтобы привязать Google Calendar, открой ссылку:\n\n"
