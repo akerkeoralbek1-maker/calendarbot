@@ -82,50 +82,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     response = await user_agent.handle_message(user_message)
 
-    if "✅ Событие создано" in response:
-        lines = response.split("\n")
-
-        event_title = "событие"
-        event_date = None
-        event_time = None
-
-        for line in lines:
-            if line.startswith("📌"):
-                event_title = line.replace("📌", "").strip()
-
-            if line.startswith("📅"):
-                event_date = line.replace("📅", "").strip()
-
-            if line.startswith("🕒"):
-                event_time = line.replace("🕒", "").strip()
-
-        if event_date and event_time:
-            event_datetime = datetime.strptime(
-                f"{event_date} {event_time}",
-                "%d.%m.%Y %H:%M"
-            )
-
-            now = datetime.now()
-
-            reminder_1_hour = event_datetime - timedelta(hours=1)
-            reminder_5_min = event_datetime - timedelta(minutes=5)
-
-            if reminder_1_hour > now:
-                context.job_queue.run_once(
-                    send_reminder,
-                    when=(reminder_1_hour - now).total_seconds(),
-                    chat_id=update.effective_chat.id,
-                    data=f"⏰ Через 1 час событие:\n{event_title}"
-                )
-
-            if reminder_5_min > now:
-                context.job_queue.run_once(
-                    send_reminder,
-                    when=(reminder_5_min - now).total_seconds(),
-                    chat_id=update.effective_chat.id,
-                    data=f"⏰ Через 5 минут событие:\n{event_title}"
-                )
-
     await update.message.reply_text(response)
 
 
