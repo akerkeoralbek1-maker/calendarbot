@@ -9,6 +9,8 @@ load_dotenv()
 
 app = Flask(__name__)
 
+flows = {}
+
 SCOPES = ["https://www.googleapis.com/auth/calendar"]
 
 REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI")
@@ -49,6 +51,8 @@ def auth():
         state=user_id,
     )
 
+    flows[user_id] = flow
+
     return f'<a href="{authorization_url}">Привязать Google Calendar</a>'
 
 
@@ -59,11 +63,10 @@ def oauth2callback():
     if not user_id:
         return "Missing user_id", 400
 
-    flow = Flow.from_client_config(
-        CLIENT_CONFIG,
-        scopes=SCOPES,
-        redirect_uri=REDIRECT_URI,
-    )
+    flow = flows.get(user_id)
+
+    if not flow:
+        return "Flow not found", 400
 
     secure_url = request.url.replace("http://", "https://", 1)
 
