@@ -65,8 +65,10 @@ def oauth2callback():
         redirect_uri=REDIRECT_URI,
     )
 
+    secure_url = request.url.replace("http://", "https://", 1)
+
     flow.fetch_token(
-        authorization_response=request.url
+        authorization_response=secure_url
     )
 
     credentials = flow.credentials
